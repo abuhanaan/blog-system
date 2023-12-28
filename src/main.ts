@@ -8,7 +8,7 @@ async function bootstrap() {
   // SwaggerUI Setup
   const config = new DocumentBuilder()
     .setTitle('Median')
-    .setDescription('The Median API description')
+    .setDescription('The Blog API description')
     .setVersion('0.1')
     .build();
 
