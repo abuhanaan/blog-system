@@ -15,6 +15,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     let status: number;
     let message: string;
+    let error;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -22,14 +23,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'Internal Server Error';
-      console.log({ source: 'globalFilter1', message });
     }
 
-    console.log(Array.isArray(message) ? message[0] : message);
+    if (message !== 'Internal Server Error') {
+      error = exception.getResponse()['error'] || null;
+    }
+    // console.log(exception.getResponse());
 
     response.status(status).json({
       statusCode: status,
       message: message,
+      error: error,
       timestamp: new Date().toISOString(),
       path: request.url,
     });

@@ -19,7 +19,6 @@ async function bootstrap() {
   );
 
   // Register the global exception filter
-  // app.useGlobalFilters(new ValidationExceptionFilter());
   app.useGlobalFilters(
     new GlobalExceptionFilter(),
     new BadRequestExceptionFilter(),
