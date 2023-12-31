@@ -24,15 +24,24 @@ export class ArticlesService {
   }
 
   findDrafts() {
-    return this.prisma.article.findMany({ where: { published: false } });
+    return this.prisma.article.findMany({
+      where: { published: false },
+      include: { author: true },
+    });
   }
 
   findAll() {
-    return this.prisma.article.findMany({ where: { published: true } });
+    return this.prisma.article.findMany({
+      where: { published: true },
+      include: { author: true },
+    });
   }
 
   async findOne(id: number) {
-    const article = await this.prisma.article.findUnique({ where: { id } });
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: { author: true },
+    });
     if (!article) {
       throw new NotFoundException({
         message: 'Resource Not Found',
@@ -45,6 +54,7 @@ export class ArticlesService {
   update(id: number, updateArticleDto: UpdateArticleDto) {
     return this.prisma.article.update({
       where: { id },
+      include: { author: true },
       data: updateArticleDto,
     });
   }
