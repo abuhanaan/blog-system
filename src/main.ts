@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { BadRequestExceptionFilter } from './utils/badRequestExceptionFilter';
 import { GlobalExceptionFilter } from './utils/globalExceptionFilter';
+import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,9 +19,12 @@ async function bootstrap() {
     }),
   );
 
+  const { httpAdapter } = app.get(HttpAdapterHost);
+
   // Register the global exception filter
   app.useGlobalFilters(
     new GlobalExceptionFilter(),
+    new PrismaClientExceptionFilter(httpAdapter),
     new BadRequestExceptionFilter(),
   );
   // app.useGlobalFilters(new GlobalExceptionFilter());
