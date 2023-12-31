@@ -1,12 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
+import { BadRequestExceptionFilter } from './utils/badRequestExceptionFilter';
+import { GlobalExceptionFilter } from './utils/globalExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      enableDebugMessages: true,
+      exceptionFactory: (errors) => {
+        throw new BadRequestException(errors);
+      },
+    }),
+  );
+
+  // Register the global exception filter
+  // app.useGlobalFilters(new ValidationExceptionFilter());
+  app.useGlobalFilters(
+    new GlobalExceptionFilter(),
+    new BadRequestExceptionFilter(),
+  );
+  // app.useGlobalFilters(new GlobalExceptionFilter());
 
   // SwaggerUI Setup
   const config = new DocumentBuilder()
