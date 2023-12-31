@@ -18,8 +18,11 @@ export class ArticleEntity implements Article {
   published: boolean;
 
   @ApiProperty()
-  createdAt: Date;
+  authorId: number | null;
 
   @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty({ required: false, nullable: true })
   updatedAt: Date;
 }
