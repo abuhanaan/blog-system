@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,12 +10,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
-  create(createArticleDto: CreateArticleDto) {
-    try {
-      return this.prisma.article.create({ data: createArticleDto });
-    } catch (error) {
-      console.log(error);
+  async create(createArticleDto: CreateArticleDto) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { title: createArticleDto.title },
+    });
+    if (existingArticle) {
+      throw new ConflictException({
+        message: 'Conflict Operation',
+        error: `Article with title ${createArticleDto.title} already exist`,
+      });
     }
+    return this.prisma.article.create({ data: createArticleDto });
   }
 
   findDrafts() {

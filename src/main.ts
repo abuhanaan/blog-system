@@ -19,15 +19,14 @@ async function bootstrap() {
     }),
   );
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
+  // const { httpAdapter } = app.get(HttpAdapterHost);
 
   // Register the global exception filter
   app.useGlobalFilters(
     new GlobalExceptionFilter(),
-    new PrismaClientExceptionFilter(httpAdapter),
+    // new PrismaClientExceptionFilter(httpAdapter),
     new BadRequestExceptionFilter(),
   );
-  // app.useGlobalFilters(new GlobalExceptionFilter());
 
   // SwaggerUI Setup
   const config = new DocumentBuilder()
