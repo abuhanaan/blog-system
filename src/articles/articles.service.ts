@@ -51,7 +51,14 @@ export class ArticlesService {
     return article;
   }
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
+  async update(id: number, updateArticleDto: UpdateArticleDto) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      return new NotFoundException({
+        message: 'Not Found',
+        error: `Article with id ${id} does not exist`,
+      });
+    }
     return this.prisma.article.update({
       where: { id },
       include: { author: true },
@@ -59,7 +66,14 @@ export class ArticlesService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      return new NotFoundException({
+        message: 'Not Found',
+        error: `Article with id ${id} does not exist`,
+      });
+    }
     return this.prisma.article.delete({ where: { id } });
   }
 }
